@@ -1,0 +1,725 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Clube da Cultura</title>
+<meta name="description" content="Agenda, sugestões e votação do Clube da Cultura.">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22%3E%3Ctext y=%22.9em%22 font-size=%2290%22%3E%E2%9C%B3%3C/text%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Anton&family=Nunito+Sans:opsz,wght@6..12,400;6..12,600;6..12,800;6..12,900&display=swap">
+<style>
+/* Layout: letreiro editorial (faixa rolante + títulos condensados) sobre uma agenda em cartões; cada categoria tem sua cor pastel. */
+:root{
+  --bg:#F6F7FC; --surface:#FFFFFF; --ink:#16132A; --muted:#5E5B74; --line:#DFE0EE;
+  --peri:#CDD2FF; --peri-ink:#2B22B5;
+  --coral:#FFCFC9; --coral-ink:#B0261F;
+  --mint:#C9EFDD; --mint-ink:#1D6A4B;
+  --butter:#FFEAA6; --butter-ink:#7A5800;
+  --lilac:#E9DDFB;
+  --band:#FFD3CE; --band-ink:#B0261F;
+  --focus:#2B22B5;
+  --display:"Anton","Oswald","Impact","Arial Narrow",sans-serif;
+  --body:"Nunito Sans","Segoe UI",system-ui,-apple-system,sans-serif;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --bg:#14121E; --surface:#1D1B2A; --ink:#F1EFFA; --muted:#A7A4BD; --line:#332F48;
+  --peri:#353B78; --peri-ink:#C9CEFF;
+  --coral:#5E2F32; --coral-ink:#FFB8B1;
+  --mint:#21483A; --mint-ink:#A3E6C6;
+  --butter:#544419; --butter-ink:#FFE38F;
+  --lilac:#33284A;
+  --band:#5E2F32; --band-ink:#FFD0CB;
+  --focus:#C9CEFF; color-scheme:dark;
+}}
+:root[data-theme="dark"]{
+  --bg:#14121E; --surface:#1D1B2A; --ink:#F1EFFA; --muted:#A7A4BD; --line:#332F48;
+  --peri:#353B78; --peri-ink:#C9CEFF;
+  --coral:#5E2F32; --coral-ink:#FFB8B1;
+  --mint:#21483A; --mint-ink:#A3E6C6;
+  --butter:#544419; --butter-ink:#FFE38F;
+  --lilac:#33284A;
+  --band:#5E2F32; --band-ink:#FFD0CB;
+  --focus:#C9CEFF; color-scheme:dark;
+}
+*{box-sizing:border-box}
+html{color-scheme:light}
+:root{padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--body);font-size:16px;line-height:1.5;margin:0}
+body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);z-index:10;background:var(--surface)}
+.wrap{max-width:1080px;margin:0 auto;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+h1,h2,h3{font-family:var(--display);font-weight:400;text-transform:uppercase;letter-spacing:.01em;line-height:.98;margin:0;text-wrap:balance}
+button,input,select,textarea{font:inherit;color:inherit}
+:focus-visible{outline:3px solid var(--focus);outline-offset:2px}
+a{color:var(--peri-ink)}
+
+/* Header */
+header.top{position:sticky;top:env(safe-area-inset-top,0px);z-index:5;background:var(--surface);border-bottom:1px solid var(--line)}
+.top .wrap{display:flex;align-items:center;gap:16px;padding-block:12px;flex-wrap:wrap}
+.logo{display:flex;align-items:flex-end;gap:6px;text-decoration:none;color:var(--ink)}
+.logo b{font-family:var(--display);font-weight:400;font-size:30px;line-height:.9;text-transform:uppercase}
+.logo span{font-weight:900;font-size:10px;letter-spacing:.12em;text-transform:uppercase;background:var(--coral);color:var(--coral-ink);padding:2px 6px;border-radius:3px;margin-bottom:2px}
+nav.links{display:flex;gap:18px;margin-left:auto;flex-wrap:wrap}
+nav.links a{color:var(--coral-ink);font-weight:700;text-underline-offset:4px}
+.who{position:relative}
+.who-btn{display:flex;align-items:center;gap:8px;border:1.5px solid var(--ink);background:transparent;border-radius:100px;padding:6px 14px 6px 6px;cursor:pointer;font-weight:800;font-size:14px}
+.who-btn .av{width:26px;height:26px;border-radius:50%;display:grid;place-items:center;background:var(--lilac);font-size:12px}
+.who-btn.need{background:var(--butter);border-color:var(--butter-ink);color:var(--butter-ink)}
+.who-pop{position:absolute;right:0;top:calc(100% + 8px);width:min(300px,calc(100vw - 32px));background:var(--surface);border:1px solid var(--line);border-radius:14px;box-shadow:0 12px 32px rgb(0 0 0 / .14);padding:14px;display:grid;gap:10px;z-index:6}
+.who-pop p{margin:0;font-size:13px;color:var(--muted)}
+.chips{display:flex;flex-wrap:wrap;gap:6px}
+.chip{border:1.5px solid var(--line);background:var(--bg);border-radius:100px;padding:5px 12px;font-weight:700;font-size:14px;cursor:pointer}
+.chip[aria-pressed="true"]{background:var(--ink);color:var(--bg);border-color:var(--ink)}
+.row{display:flex;gap:8px}
+.row input{flex:1;min-width:0}
+
+/* Marquee */
+.band{background:var(--band);color:var(--band-ink);overflow:hidden;border-bottom:1px solid var(--line)}
+.band-track{display:flex;width:max-content;animation:roll 38s linear infinite}
+.band-track span{font-family:var(--display);text-transform:uppercase;font-size:20px;letter-spacing:.02em;padding:10px 0;white-space:nowrap}
+.band-track i{font-style:normal;margin:0 22px;color:var(--ink)}
+@keyframes roll{to{transform:translateX(-50%)}}
+@media (prefers-reduced-motion:reduce){.band-track{animation:none}}
+
+/* Hero */
+.hero{padding-block:36px 28px}
+.hero-grid{display:grid;grid-template-columns:1.25fr 1fr;gap:28px;align-items:stretch}
+.hero h1{font-size:clamp(44px,8vw,96px)}
+.hero h1 em{font-style:normal;color:var(--peri-ink)}
+.hero h1 .c2{color:var(--coral-ink)}
+.hero h1 .c3{color:var(--mint-ink)}
+.hero h1 .c4{color:var(--butter-ink)}
+.hero .lede{max-width:52ch;color:var(--muted);font-size:17px;margin:18px 0 0}
+.next{background:var(--peri);border-radius:22px;padding:22px;display:grid;gap:12px;align-content:start;position:relative;overflow:hidden;min-width:0}
+.next[data-cat="filmes"]{background:var(--coral)} .next[data-cat="livros"]{background:var(--mint)} .next[data-cat="bonus"]{background:var(--butter)}
+.next .eyebrow{font-weight:900;font-size:12px;letter-spacing:.14em;text-transform:uppercase}
+.next .big{display:flex;align-items:baseline;gap:12px;flex-wrap:wrap}
+.next .big h2{font-size:clamp(48px,7vw,76px)}
+.next .big small{font-weight:800;font-size:15px}
+.next .lead{background:var(--surface);border-radius:14px;padding:12px 14px;display:grid;gap:2px}
+.next .lead b{font-size:17px}
+.next .lead span{font-size:13px;color:var(--muted)}
+.next .star{position:absolute;right:-18px;top:-30px;font-size:150px;line-height:1;opacity:.18;pointer-events:none;font-family:var(--body);font-weight:900}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:6px;border:0;border-radius:100px;padding:10px 20px;font-weight:900;font-size:15px;cursor:pointer;background:var(--ink);color:var(--bg);text-decoration:none}
+.btn.ghost{background:transparent;color:var(--ink);border:1.5px solid var(--ink)}
+.btn.sm{padding:6px 14px;font-size:13px}
+.btn:disabled{opacity:.45;cursor:not-allowed}
+
+/* Calendar strip */
+.strip-wrap{overflow-x:auto;padding-bottom:6px}
+.strip{display:flex;gap:8px;width:max-content;padding-block:4px}
+.tick{border:0;border-radius:12px;padding:8px 12px;min-width:74px;text-align:left;cursor:pointer;background:var(--peri);color:var(--ink);display:grid;gap:0}
+.tick[data-cat="filmes"]{background:var(--coral)} .tick[data-cat="livros"]{background:var(--mint)} .tick[data-cat="bonus"]{background:var(--butter)}
+.tick b{font-family:var(--display);font-weight:400;font-size:22px;line-height:1}
+.tick span{font-size:11px;font-weight:800;text-transform:uppercase;letter-spacing:.08em}
+.tick.past{opacity:.5}
+.tick.is-next{outline:2px solid var(--ink);outline-offset:2px}
+
+/* Sections */
+section.block{padding-block:28px}
+.sec-head{display:flex;align-items:end;justify-content:space-between;gap:16px;flex-wrap:wrap;margin-bottom:18px}
+.sec-head h2{font-size:clamp(34px,5vw,52px)}
+.filters{display:flex;flex-wrap:wrap;gap:6px}
+.filters .chip[data-cat="musica"][aria-pressed="true"]{background:var(--peri);color:var(--peri-ink);border-color:var(--peri-ink)}
+.filters .chip[data-cat="filmes"][aria-pressed="true"]{background:var(--coral);color:var(--coral-ink);border-color:var(--coral-ink)}
+.filters .chip[data-cat="livros"][aria-pressed="true"]{background:var(--mint);color:var(--mint-ink);border-color:var(--mint-ink)}
+.filters .chip[data-cat="bonus"][aria-pressed="true"]{background:var(--butter);color:var(--butter-ink);border-color:var(--butter-ink)}
+.notice{background:var(--butter);color:var(--butter-ink);border-radius:12px;padding:10px 14px;font-weight:700;font-size:14px;margin-bottom:16px}
+
+/* Meeting card */
+.agenda{display:grid;gap:16px}
+.meet{display:grid;grid-template-columns:96px minmax(0,1fr);background:var(--surface);border:1px solid var(--line);border-radius:20px;overflow:hidden;scroll-margin-top:90px}
+.m-date{background:var(--peri);color:var(--peri-ink);display:flex;flex-direction:column;align-items:center;justify-content:flex-start;padding:18px 6px;gap:2px;text-align:center}
+.meet[data-cat="filmes"] .m-date{background:var(--coral);color:var(--coral-ink)}
+.meet[data-cat="livros"] .m-date{background:var(--mint);color:var(--mint-ink)}
+.meet[data-cat="bonus"] .m-date{background:var(--butter);color:var(--butter-ink)}
+.m-date .d{font-family:var(--display);font-size:48px;line-height:.9}
+.m-date .mo{font-family:var(--display);font-size:20px;letter-spacing:.04em}
+.m-date .y{font-weight:800;font-size:12px}
+.m-body{padding:18px 20px;display:grid;gap:14px;min-width:0}
+.m-top{display:flex;align-items:center;gap:8px 12px;flex-wrap:wrap}
+.m-top h3{font-size:28px}
+.pill{font-weight:900;font-size:11px;letter-spacing:.1em;text-transform:uppercase;border-radius:100px;padding:3px 10px;background:var(--peri);color:var(--peri-ink)}
+.pill[data-cat="filmes"]{background:var(--coral);color:var(--coral-ink)} .pill[data-cat="livros"]{background:var(--mint);color:var(--mint-ink)} .pill[data-cat="bonus"]{background:var(--butter);color:var(--butter-ink)}
+.pill.soft{background:var(--lilac);color:var(--ink)}
+.m-top .when{font-size:13px;color:var(--muted);font-weight:700}
+.m-top .edit{margin-left:auto}
+.theme-line{font-size:15px;color:var(--muted);margin:-6px 0 0}
+.theme-line b{color:var(--ink)}
+.linkish{background:none;border:0;padding:0;color:var(--peri-ink);font-weight:700;cursor:pointer;text-decoration:underline;text-underline-offset:3px;font-size:13px}
+
+/* Phase stepper */
+.phases{display:flex;gap:0;border:1.5px solid var(--ink);border-radius:100px;overflow:hidden;width:max-content;max-width:100%}
+.phases button{border:0;background:transparent;padding:6px 14px;font-weight:800;font-size:13px;cursor:pointer;white-space:nowrap}
+.phases button+button{border-left:1.5px solid var(--ink)}
+.phases button[aria-pressed="true"]{background:var(--ink);color:var(--bg)}
+.phase-hint{font-size:13px;color:var(--muted);margin:-6px 0 0}
+
+/* Suggestions */
+.sugs{list-style:none;margin:0;padding:0;display:grid;gap:10px}
+.sug{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:6px 16px;align-items:center;padding:12px 14px;border-radius:14px;background:var(--bg);border:1.5px solid transparent}
+.sug.mine-vote{border-color:var(--ink)}
+.sug.winner{background:var(--lilac);border-color:var(--ink)}
+.sug .t{font-weight:900;font-size:17px;line-height:1.25;overflow-wrap:anywhere}
+.sug .c{font-weight:600;color:var(--muted)}
+.sug .meta{font-size:13px;color:var(--muted);display:flex;gap:6px 10px;flex-wrap:wrap;align-items:center}
+.sug .note{font-size:14px;margin:4px 0 0;overflow-wrap:anywhere}
+.sug .bar{grid-column:1/-1;height:6px;border-radius:6px;background:var(--line);overflow:hidden}
+.sug .bar i{display:block;height:100%;background:var(--ink);border-radius:6px;transition:width .3s}
+.vote{display:flex;align-items:center;gap:10px}
+.vote .n{font-family:var(--display);font-size:32px;line-height:1;font-variant-numeric:tabular-nums;min-width:1.2ch;text-align:right}
+.vote .n small{display:block;font-family:var(--body);font-size:10px;font-weight:800;letter-spacing:.1em;text-transform:uppercase;color:var(--muted)}
+.voters{grid-column:1/-1;display:flex;flex-wrap:wrap;gap:4px}
+.voters span{font-size:12px;font-weight:700;background:var(--surface);border:1px solid var(--line);border-radius:100px;padding:1px 8px}
+.crown{font-weight:900;font-size:11px;letter-spacing:.1em;text-transform:uppercase;background:var(--ink);color:var(--bg);border-radius:100px;padding:2px 8px}
+.empty{color:var(--muted);font-size:14px;padding:12px 14px;border:1.5px dashed var(--line);border-radius:14px}
+
+/* Forms */
+form.f{display:grid;gap:10px;background:var(--bg);border-radius:14px;padding:14px}
+form.f .grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:10px}
+label.fl{display:grid;gap:4px;font-size:12px;font-weight:800;letter-spacing:.06em;text-transform:uppercase;color:var(--muted)}
+input[type=text],input[type=url],input[type=date],select,textarea{width:100%;border:1.5px solid var(--line);background:var(--surface);border-radius:10px;padding:9px 11px;font-size:15px;text-transform:none;letter-spacing:0;font-weight:600;color:var(--ink)}
+textarea{resize:vertical;min-height:60px}
+.f-actions{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+.danger{color:var(--coral-ink)}
+
+/* How it works */
+.how{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:14px}
+.how div{background:var(--surface);border:1px solid var(--line);border-radius:18px;padding:18px}
+.how h3{font-size:24px;margin-bottom:6px}
+.how p{margin:0;color:var(--muted);font-size:15px}
+.how .k{font-family:var(--display);font-size:16px;color:var(--coral-ink)}
+.cats{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:12px;margin-top:14px}
+.cat{border-radius:18px;padding:16px 18px;background:var(--peri);color:var(--peri-ink)}
+.cat[data-cat="filmes"]{background:var(--coral);color:var(--coral-ink)} .cat[data-cat="livros"]{background:var(--mint);color:var(--mint-ink)} .cat[data-cat="bonus"]{background:var(--butter);color:var(--butter-ink)}
+.cat h3{font-size:28px}
+.cat p{margin:4px 0 0;font-size:14px;font-weight:600;color:var(--ink)}
+
+footer{padding-block:32px 48px;color:var(--muted);font-size:13px;border-top:1px solid var(--line);margin-top:24px}
+.toast{position:fixed;left:50%;bottom:calc(20px + env(safe-area-inset-bottom,0px));transform:translateX(-50%);background:var(--ink);color:var(--bg);padding:10px 18px;border-radius:100px;font-weight:800;font-size:14px;z-index:20;max-width:calc(100vw - 32px);text-align:center}
+.sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)}
+
+@media (max-width:760px){
+  .hero-grid{grid-template-columns:1fr}
+  nav.links{display:none}
+  .who{margin-left:auto}
+}
+@media (max-width:520px){
+  .meet{grid-template-columns:1fr}
+  .m-date{flex-direction:row;justify-content:flex-start;align-items:baseline;gap:8px;padding:10px 16px}
+  .m-date .d{font-size:34px}
+  .m-body{padding:14px}
+  .sug{grid-template-columns:1fr}
+  .vote{justify-content:space-between}
+}
+</style>
+</head>
+<body>
+
+<header class="top">
+  <div class="wrap">
+    <a class="logo" href="#agenda" aria-label="Clube da Cultura"><b>Clube da<br>Cultura</b><span>entre amigos</span></a>
+    <nav class="links" aria-label="Seções">
+      <a href="#agenda">Agenda</a>
+      <a href="#novo">Novo encontro</a>
+      <a href="#como">Como funciona</a>
+    </nav>
+    <div class="who">
+      <button class="who-btn need" id="whoBtn" type="button" aria-expanded="false" aria-controls="whoPop"><span class="av" id="whoAv">?</span><span id="whoName">Quem é você?</span></button>
+      <div class="who-pop" id="whoPop" hidden>
+        <p>Escolha seu nome para sugerir e votar. Fica salvo neste navegador.</p>
+        <div class="chips" id="memberChips"></div>
+        <form class="row" id="addMember">
+          <label class="sr" for="newMember">Nome de nova pessoa</label>
+          <input type="text" id="newMember" placeholder="Adicionar pessoa" maxlength="30" autocomplete="off">
+          <button class="btn sm" type="submit">Adicionar</button>
+        </form>
+      </div>
+    </div>
+  </div>
+</header>
+
+<div class="band" aria-hidden="true"><div class="band-track" id="bandTrack"></div></div>
+
+<main>
+  <section class="hero">
+    <div class="wrap hero-grid">
+      <div>
+        <h1>O que a gente vai <em>ouvir</em>, <span class="c2">ver</span>, <span class="c3">ler</span> e <span class="c4">viver</span>?</h1>
+        <p class="lede">Um encontro por mês, no dia 15, em rodízio: álbuns, filmes, livros e um bônus fora da curva. Cada pessoa sugere, todo mundo vota, a mais votada vira o programa.</p>
+      </div>
+      <aside class="next" id="nextCard" data-cat="musica" aria-live="polite">
+        <span class="star" aria-hidden="true">✳</span>
+        <span class="eyebrow">Próximo encontro</span>
+        <div class="big"><h2 id="nextDate">—</h2><small id="nextWhen"></small></div>
+        <div id="nextInfo"><span class="pill soft">Carregando agenda…</span></div>
+      </aside>
+    </div>
+  </section>
+
+  <div class="wrap"><div class="strip-wrap" aria-label="Calendário"><div class="strip" id="strip"></div></div></div>
+
+  <section class="block" id="agenda">
+    <div class="wrap">
+      <div class="sec-head">
+        <h2>Agenda</h2>
+        <div class="filters" id="filters" role="group" aria-label="Filtrar por categoria"></div>
+      </div>
+      <div id="notice"></div>
+      <div class="agenda" id="agendaList">
+        <div class="empty">Carregando os encontros… Se nada aparecer, crie o primeiro em “Novo encontro”.</div>
+      </div>
+      <details id="pastWrap" hidden style="margin-top:20px">
+        <summary class="linkish" style="font-size:15px">Encontros que já rolaram</summary>
+        <div class="agenda" id="pastList" style="margin-top:14px"></div>
+      </details>
+    </div>
+  </section>
+
+  <section class="block" id="novo">
+    <div class="wrap">
+      <div class="sec-head"><h2>Novo encontro</h2></div>
+      <form class="f" id="newMeeting">
+        <div class="grid">
+          <label class="fl" for="nmDate">Data<input type="date" id="nmDate" required></label>
+          <label class="fl" for="nmCat">Categoria<select id="nmCat"></select></label>
+          <label class="fl" for="nmTheme">Tema (opcional)<input type="text" id="nmTheme" maxlength="80" placeholder="Ex.: Tropicália, distopias, Copa"></label>
+        </div>
+        <div class="f-actions"><button class="btn" type="submit">Criar encontro</button><span class="phase-hint" style="margin:0">A data e a categoria já vêm preenchidas seguindo o rodízio.</span></div>
+      </form>
+    </div>
+  </section>
+
+  <section class="block" id="como">
+    <div class="wrap">
+      <div class="sec-head"><h2>Como funciona</h2></div>
+      <div class="how">
+        <div><span class="k">1 · Sugestões</span><h3>Cada um traz uma ideia</h3><p>Com o encontro aberto, qualquer pessoa adiciona sugestões dentro da categoria e do tema do mês.</p></div>
+        <div><span class="k">2 · Votação</span><h3>Um voto por pessoa</h3><p>Quando alguém muda a fase para Votação, as sugestões fecham. Dá para trocar o voto até o fim.</p></div>
+        <div><span class="k">3 · Definido</span><h3>A mais votada vence</h3><p>Ao passar para Definido, a sugestão com mais votos vira o programa. Em caso de empate, vocês escolhem na mão.</p></div>
+      </div>
+      <div class="cats">
+        <div class="cat" data-cat="musica"><h3>Músicas</h3><p>Um álbum inteiro, do começo ao fim.</p></div>
+        <div class="cat" data-cat="filmes"><h3>Filmes</h3><p>Longa, curta, documentário ou série curta.</p></div>
+        <div class="cat" data-cat="livros"><h3>Livros</h3><p>Romance, ensaio, poesia, quadrinho.</p></div>
+        <div class="cat" data-cat="bonus"><h3>Bônus</h3><p>Visitas de campo, teatro, festas, esportes, gastronomia.</p></div>
+      </div>
+    </div>
+  </section>
+</main>
+
+<footer><div class="wrap">Clube da Cultura · as sugestões e os votos ficam salvos aqui e aparecem para todo mundo que abre este link.</div></footer>
+<div class="toast" id="toast" role="status" aria-live="polite" hidden></div>
+
+<script type="module">
+/* ===== CONFIGURAÇÃO DO FIREBASE =====
+   Cole aqui o bloco firebaseConfig do seu projeto
+   (Console do Firebase > Configurações do projeto > Seus apps > Web). */
+const firebaseConfig = {
+     apiKey: "AIza...",
+     authDomain: "seu-projeto.firebaseapp.com",
+     projectId: "seu-projeto",
+     storageBucket: "seu-projeto.appspot.com",
+     messagingSenderId: "1234567890",
+     appId: "1:1234567890:web:abc123"
+   };
+/* ===================================== */
+
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+import { getFirestore, collection, doc, setDoc, updateDoc, deleteDoc, addDoc, onSnapshot, getDoc, writeBatch } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+
+const SEED = {
+  members: ["Moroni", "Idu", "Daniel"],
+  meetings: [
+    ["2026-11-15","musica"],["2026-12-15","filmes"],["2027-01-15","livros"],["2027-02-15","bonus"],
+    ["2027-03-15","musica"],["2027-04-15","filmes"],["2027-05-15","livros"],["2027-06-15","bonus"],
+    ["2027-07-15","musica"],["2027-08-15","filmes"],["2027-08-16","livros"],["2027-08-17","bonus"]
+  ],
+  suggestions: [
+    ["s-vandal","m-2026-11-15","VANGUARDAH","Vandal","Moroni"],
+    ["s-cameron","m-2026-11-15","Live at Carnegie Hall","Cameron Winter","Idu"],
+    ["s-ween","m-2026-11-15","The Mollusk","Ween","Daniel"],
+    ["s-ailha","m-2027-01-15","A Ilha","Aldous Huxley","Moroni"]
+  ]
+};
+
+function makeDB(){
+  if (/COLE_AQUI/.test(firebaseConfig.apiKey)) return null;
+  const fs = getFirestore(initializeApp(firebaseConfig));
+  const wrapDoc = s => ({ id: s.id, exists: s.exists(), data: () => s.data() });
+  const DB = {
+    fs,
+    collection: p => ({
+      onSnapshot: (next, err) => onSnapshot(collection(fs, p), q => next({ docs: q.docs.map(wrapDoc) }), err),
+      add: data => addDoc(collection(fs, p), data)
+    }),
+    doc: p => {
+      const r = doc(fs, p);
+      return {
+        set: d => setDoc(r, d), update: d => updateDoc(r, d), delete: () => deleteDoc(r),
+        onSnapshot: (next, err) => onSnapshot(r, s => next(wrapDoc(s)), err)
+      };
+    }
+  };
+  return DB;
+}
+async function seedIfEmpty(DB){
+  const cfg = await getDoc(doc(DB.fs, "config/club"));
+  if (cfg.exists()) return;
+  const b = writeBatch(DB.fs);
+  b.set(doc(DB.fs, "config/club"), { members: SEED.members });
+  SEED.meetings.forEach(([date, category], i) => b.set(doc(DB.fs, "meetings/m-" + date), { date, category, theme: "", phase: "sugestoes", winnerId: null, createdAt: i + 1 }));
+  SEED.suggestions.forEach(([id, meetingId, title, creator, member], i) => b.set(doc(DB.fs, "suggestions/" + id), { meetingId, title, creator, member, link: "", note: "", bonusType: "", createdAt: i + 1 }));
+  await b.commit();
+}
+
+{
+const CATS = {
+  musica:{label:'Música', plural:'Músicas', f1:'Álbum', f2:'Artista'},
+  filmes:{label:'Filme', plural:'Filmes', f1:'Filme', f2:'Direção'},
+  livros:{label:'Livro', plural:'Livros', f1:'Livro', f2:'Autor(a)'},
+  bonus:{label:'Bônus', plural:'Bônus', f1:'Programa', f2:'Onde / detalhes'}
+};
+const ORDER = ['musica','filmes','livros','bonus'];
+const BONUS_TYPES = ['Visitas de campo','Teatro','Festas','Esportes','Gastronomia','Outro'];
+const PHASES = [['sugestoes','Sugestões'],['votacao','Votação'],['definido','Definido']];
+const MONTHS = ['JAN','FEV','MAR','ABR','MAI','JUN','JUL','AGO','SET','OUT','NOV','DEZ'];
+
+const S = {
+  db:null, ready:false, readOnly:false,
+  meetings:[], suggestions:[], votes:[], members:[],
+  me:null, filter:'todos', openForm:null, editMeeting:null, confirm:null, pending:false
+};
+try { S.me = localStorage.getItem('cc-member') || null; } catch(e) {}
+
+const $ = s => document.querySelector(s);
+const esc = s => String(s ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const slug = s => String(s).normalize('NFD').replace(/[̀-ͯ]/g,'').toLowerCase().replace(/[^a-z0-9]+/g,'-').replace(/^-|-$/g,'') || 'x';
+const parseD = s => { const [y,m,d] = String(s).split('-').map(Number); return new Date(y, (m||1)-1, d||1); };
+const today0 = () => { const t = new Date(); t.setHours(0,0,0,0); return t; };
+const daysTo = s => Math.round((parseD(s) - today0()) / 86400000);
+const whenTxt = s => { const n = daysTo(s); if (n === 0) return 'é hoje'; if (n === 1) return 'é amanhã'; if (n > 0) return `faltam ${n} dias`; if (n === -1) return 'foi ontem'; return `foi há ${-n} dias`; };
+const isoOf = d => `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
+
+let toastT;
+function toast(msg){ const t = $('#toast'); t.textContent = msg; t.hidden = false; clearTimeout(toastT); toastT = setTimeout(() => t.hidden = true, 3200); }
+
+async function write(fn, okMsg){
+  if (!S.db) { toast('O banco de dados ainda não foi configurado.'); return false; }
+  if (S.readOnly) { toast('Seu acesso aqui é só de leitura.'); return false; }
+  try { await fn(); if (okMsg) toast(okMsg); return true; }
+  catch(e){
+    const c = e && e.code;
+    if (c === 'permission-denied' || c === 'invalid_argument') { S.readOnly = true; render(); toast('Seu acesso aqui é só de leitura. Confira as regras do Firestore.'); }
+    else if (c === 'quota_exceeded' || c === 'resource-exhausted') toast('O espaço do clube encheu. Apague sugestões antigas para liberar.');
+    else if (c === 'resource_exhausted') toast('Muitas ações seguidas. Espere alguns segundos.');
+    else toast('Não deu para salvar agora. Tente de novo.');
+    return false;
+  }
+}
+
+/* ---------- derived ---------- */
+const sortedMeetings = () => [...S.meetings].sort((a,b) => a.date < b.date ? -1 : a.date > b.date ? 1 : 0);
+const sugsOf = mid => S.suggestions.filter(s => s.meetingId === mid).sort((a,b) => (a.createdAt||0) - (b.createdAt||0));
+const votesOf = (mid) => S.votes.filter(v => v.meetingId === mid);
+const myVote = mid => S.me ? S.votes.find(v => v.meetingId === mid && v.member === S.me) : null;
+function tally(mid){
+  const vs = votesOf(mid), m = {};
+  vs.forEach(v => { (m[v.suggestionId] ||= []).push(v.member); });
+  return { by:m, total:vs.length };
+}
+function nextMeeting(){ return sortedMeetings().find(m => daysTo(m.date) >= 0) || null; }
+function leaderOf(mid){
+  const t = tally(mid), list = sugsOf(mid);
+  let best = null, bestN = 0, tie = false;
+  list.forEach(s => { const n = (t.by[s.id]||[]).length; if (n > bestN) { best = s; bestN = n; tie = false; } else if (n === bestN && n > 0) tie = true; });
+  return { best, n:bestN, tie };
+}
+
+/* ---------- header / identity ---------- */
+function renderWho(){
+  const btn = $('#whoBtn');
+  btn.classList.toggle('need', !S.me);
+  $('#whoName').textContent = S.me ? S.me : 'Quem é você?';
+  $('#whoAv').textContent = S.me ? S.me.trim().charAt(0).toUpperCase() : '?';
+  const box = $('#memberChips'); box.innerHTML = '';
+  const names = [...new Set([...S.members, ...(S.me ? [S.me] : [])])];
+  if (!names.length) { box.innerHTML = '<span class="phase-hint" style="margin:0">Ninguém cadastrado ainda. Adicione seu nome abaixo.</span>'; }
+  names.forEach(n => { const b = document.createElement('button'); b.type = 'button'; b.className = 'chip'; b.textContent = n; b.setAttribute('aria-pressed', String(n === S.me)); b.dataset.action = 'pick-me'; b.dataset.name = n; box.appendChild(b); });
+}
+function setMe(n){ S.me = n; try { localStorage.setItem('cc-member', n); } catch(e) {} render(); }
+$('#whoBtn').addEventListener('click', () => { const p = $('#whoPop'); p.hidden = !p.hidden; $('#whoBtn').setAttribute('aria-expanded', String(!p.hidden)); });
+document.addEventListener('click', e => { const w = e.target.closest('.who'); if (!w && !$('#whoPop').hidden) { $('#whoPop').hidden = true; $('#whoBtn').setAttribute('aria-expanded','false'); } });
+$('#addMember').addEventListener('submit', async e => {
+  e.preventDefault();
+  const n = $('#newMember').value.trim().replace(/\s+/g,' ');
+  if (!n) return;
+  if (!S.members.some(m => m.toLowerCase() === n.toLowerCase())) {
+    const members = [...S.members, n];
+    await write(() => S.db.doc('config/club').set({ members }));
+  }
+  $('#newMember').value = '';
+  setMe(S.members.find(m => m.toLowerCase() === n.toLowerCase()) || n);
+  $('#whoPop').hidden = true;
+});
+function askWho(){ $('#whoPop').hidden = false; $('#whoBtn').setAttribute('aria-expanded','true'); toast('Primeiro escolha quem você é.'); }
+
+/* ---------- band ---------- */
+function renderBand(){
+  const n = nextMeeting();
+  const parts = ['Clube da Cultura'];
+  if (n) { const d = parseD(n.date); parts.push(`Próximo: ${d.getDate()} ${MONTHS[d.getMonth()]} · ${CATS[n.category]?.plural || ''}`); if (n.theme) parts.push(`Tema: ${n.theme}`); }
+  parts.push('Sugira', 'Vote', 'Apareça');
+  const one = parts.map(p => `${esc(p)}<i>✳</i>`).join('');
+  $('#bandTrack').innerHTML = `<span>${one}</span><span>${one}</span><span>${one}</span><span>${one}</span>`;
+}
+
+/* ---------- hero ---------- */
+function renderNext(){
+  const n = nextMeeting(), card = $('#nextCard');
+  if (!S.ready) return;
+  if (!n) { card.dataset.cat = 'musica'; $('#nextDate').textContent = 'Sem data'; $('#nextWhen').textContent = ''; $('#nextInfo').innerHTML = '<a class="btn sm" href="#novo">Marcar o próximo encontro</a>'; return; }
+  const d = parseD(n.date);
+  card.dataset.cat = n.category;
+  $('#nextDate').textContent = `${d.getDate()} ${MONTHS[d.getMonth()]}`;
+  $('#nextWhen').textContent = whenTxt(n.date);
+  const L = leaderOf(n.id), sugs = sugsOf(n.id), phase = n.phase || 'sugestoes';
+  const phaseLbl = PHASES.find(p => p[0] === phase)[1];
+  let lead = '';
+  if (phase === 'definido' && n.winnerId) { const w = sugs.find(s => s.id === n.winnerId); if (w) lead = `<div class="lead"><span>Escolhido</span><b>${esc(w.title)}</b><span>${esc(w.creator)}</span></div>`; }
+  else if (L.best && !L.tie) lead = `<div class="lead"><span>Na frente, com ${L.n} voto${L.n>1?'s':''}</span><b>${esc(L.best.title)}</b><span>${esc(L.best.creator)}</span></div>`;
+  else if (L.tie) lead = `<div class="lead"><span>Votação</span><b>Empate no topo</b><span>${L.n} voto${L.n>1?'s':''} cada</span></div>`;
+  else lead = `<div class="lead"><span>${sugs.length} sugest${sugs.length===1?'ão':'ões'} até agora</span><b>${sugs.length ? 'Ninguém votou ainda' : 'Ainda sem sugestões'}</b></div>`;
+  $('#nextInfo').innerHTML = `<div style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:10px"><span class="pill" data-cat="${esc(n.category)}" style="background:var(--surface)">${esc(CATS[n.category]?.plural||'')}</span><span class="pill soft" style="background:var(--surface)">Fase: ${phaseLbl}</span>${n.theme ? `<span class="pill soft" style="background:var(--surface)">Tema: ${esc(n.theme)}</span>` : ''}</div>${lead}<div style="margin-top:12px"><a class="btn sm" href="#m-${esc(n.id)}">${phase==='votacao'?'Votar':phase==='sugestoes'?'Sugerir':'Ver encontro'}</a></div>`;
+}
+
+/* ---------- strip ---------- */
+function renderStrip(){
+  const n = nextMeeting();
+  $('#strip').innerHTML = sortedMeetings().map(m => {
+    const d = parseD(m.date);
+    return `<button class="tick ${daysTo(m.date) < 0 ? 'past' : ''} ${n && n.id === m.id ? 'is-next' : ''}" data-cat="${esc(m.category)}" data-action="goto" data-id="${esc(m.id)}" type="button"><b>${String(d.getDate()).padStart(2,'0')} ${MONTHS[d.getMonth()]}</b><span>${esc(CATS[m.category]?.plural || '')} · ${String(d.getFullYear()).slice(2)}</span></button>`;
+  }).join('');
+}
+
+/* ---------- filters ---------- */
+function renderFilters(){
+  const opts = [['todos','Tudo'], ...ORDER.map(k => [k, CATS[k].plural])];
+  $('#filters').innerHTML = opts.map(([k,l]) => `<button type="button" class="chip" data-cat="${k}" data-action="filter" aria-pressed="${S.filter===k}">${l}</button>`).join('');
+}
+
+/* ---------- meeting cards ---------- */
+function sugHTML(m, s, t, maxN){
+  const phase = m.phase || 'sugestoes';
+  const voters = t.by[s.id] || [];
+  const n = voters.length;
+  const mine = myVote(m.id)?.suggestionId === s.id;
+  const isWinner = phase === 'definido' && m.winnerId === s.id;
+  const pct = maxN ? Math.round(n / maxN * 100) : 0;
+  const link = /^https:\/\//i.test(s.link || '') ? `<a href="${esc(s.link)}" target="_blank" rel="noopener">abrir link</a>` : '';
+  const canDel = !S.readOnly && (phase === 'sugestoes');
+  let voteBtn = '';
+  if (phase === 'votacao') voteBtn = `<button class="btn sm ${mine ? '' : 'ghost'}" type="button" data-action="vote" data-mid="${esc(m.id)}" data-sid="${esc(s.id)}" aria-pressed="${mine}" ${S.readOnly?'disabled':''}>${mine ? 'Seu voto ✓' : 'Votar'}</button>`;
+  else if (phase === 'definido' && !m.winnerId) voteBtn = `<button class="btn sm ghost" type="button" data-action="pick-winner" data-mid="${esc(m.id)}" data-sid="${esc(s.id)}" ${S.readOnly?'disabled':''}>Escolher este</button>`;
+  const confirmDel = S.confirm === 'sug:' + s.id;
+  const delCtl = canDel ? (confirmDel
+      ? `<span class="danger">Remover?</span> <button class="linkish danger" type="button" data-action="del-sug" data-id="${esc(s.id)}">Sim</button> <button class="linkish" type="button" data-action="cancel">Não</button>`
+      : `<button class="linkish" type="button" data-action="ask-del-sug" data-id="${esc(s.id)}">remover</button>`) : '';
+  return `<li class="sug ${mine ? 'mine-vote' : ''} ${isWinner ? 'winner' : ''}">
+    <div style="min-width:0">
+      <div class="t">${esc(s.title)}${s.creator ? ` <span class="c">· ${esc(s.creator)}</span>` : ''}</div>
+      <div class="meta">${isWinner ? '<span class="crown">Escolhido</span>' : ''}${s.bonusType ? `<span class="pill" data-cat="bonus">${esc(s.bonusType)}</span>` : ''}<span>sugerido por <b>${esc(s.member || '—')}</b></span>${link}${delCtl}</div>
+      ${s.note ? `<p class="note">${esc(s.note)}</p>` : ''}
+    </div>
+    <div class="vote"><div class="n" aria-label="${n} votos">${n}<small>voto${n===1?'':'s'}</small></div>${voteBtn}</div>
+    ${phase !== 'sugestoes' ? `<div class="bar" aria-hidden="true"><i style="width:${pct}%"></i></div>` : ''}
+    ${n && phase !== 'sugestoes' ? `<div class="voters">${voters.map(v => `<span>${esc(v)}</span>`).join('')}</div>` : ''}
+  </li>`;
+}
+
+function addFormHTML(m){
+  const c = CATS[m.category] || CATS.musica;
+  const open = S.openForm === m.id;
+  if (!open) return `<div><button class="btn sm" type="button" data-action="open-form" data-id="${esc(m.id)}" ${S.readOnly?'disabled':''}>+ Sugerir ${c.label.toLowerCase()}</button></div>`;
+  const bonus = m.category === 'bonus' ? `<label class="fl" for="sg-type-${esc(m.id)}">Tipo<select id="sg-type-${esc(m.id)}" name="bonusType">${BONUS_TYPES.map(b => `<option>${b}</option>`).join('')}</select></label>` : '';
+  return `<form class="f" data-form="sug" data-id="${esc(m.id)}">
+    <div class="grid">
+      <label class="fl" for="sg-t-${esc(m.id)}">${c.f1}<input type="text" id="sg-t-${esc(m.id)}" name="title" maxlength="120" required></label>
+      <label class="fl" for="sg-c-${esc(m.id)}">${c.f2}<input type="text" id="sg-c-${esc(m.id)}" name="creator" maxlength="120"></label>
+      ${bonus}
+      <label class="fl" for="sg-l-${esc(m.id)}">Link (opcional)<input type="url" id="sg-l-${esc(m.id)}" name="link" placeholder="https://" maxlength="300"></label>
+    </div>
+    <label class="fl" for="sg-n-${esc(m.id)}">Por que essa? (opcional)<textarea id="sg-n-${esc(m.id)}" name="note" maxlength="400"></textarea></label>
+    <div class="f-actions"><button class="btn sm" type="submit">Enviar sugestão</button><button class="linkish" type="button" data-action="close-form">Cancelar</button>${S.me ? `<span class="phase-hint" style="margin:0">como <b>${esc(S.me)}</b></span>` : ''}</div>
+  </form>`;
+}
+
+function editFormHTML(m){
+  const confirmDel = S.confirm === 'meet:' + m.id;
+  return `<form class="f" data-form="edit" data-id="${esc(m.id)}">
+    <div class="grid">
+      <label class="fl" for="ed-d-${esc(m.id)}">Data<input type="date" id="ed-d-${esc(m.id)}" name="date" value="${esc(m.date)}" required></label>
+      <label class="fl" for="ed-c-${esc(m.id)}">Categoria<select id="ed-c-${esc(m.id)}" name="category">${ORDER.map(k => `<option value="${k}" ${k===m.category?'selected':''}>${CATS[k].plural}</option>`).join('')}</select></label>
+      <label class="fl" for="ed-t-${esc(m.id)}">Tema<input type="text" id="ed-t-${esc(m.id)}" name="theme" value="${esc(m.theme||'')}" maxlength="80" placeholder="Sem tema"></label>
+    </div>
+    <div class="f-actions"><button class="btn sm" type="submit">Salvar</button><button class="linkish" type="button" data-action="close-edit">Cancelar</button>
+    <span style="margin-left:auto">${confirmDel ? `<span class="danger">Excluir encontro e sugestões?</span> <button class="linkish danger" type="button" data-action="del-meet" data-id="${esc(m.id)}">Sim, excluir</button> <button class="linkish" type="button" data-action="cancel">Não</button>` : `<button class="linkish danger" type="button" data-action="ask-del-meet" data-id="${esc(m.id)}">Excluir encontro</button>`}</span></div>
+  </form>`;
+}
+
+function meetHTML(m){
+  const d = parseD(m.date), c = CATS[m.category] || CATS.musica;
+  const phase = m.phase || 'sugestoes';
+  const sugs = sugsOf(m.id), t = tally(m.id);
+  const maxN = Math.max(0, ...sugs.map(s => (t.by[s.id]||[]).length));
+  const hints = {
+    sugestoes: 'Sugestões abertas. A votação começa quando alguém mudar a fase.',
+    votacao: `Votação aberta · ${t.total} voto${t.total===1?'':'s'} de ${S.members.length || '?'} pessoa${S.members.length===1?'':'s'}. Um voto por pessoa; clique de novo para tirar.`,
+    definido: m.winnerId ? 'Programa definido.' : 'Empate ou sem votos: escolham a vencedora.'
+  };
+  const ordered = phase === 'sugestoes' ? sugs : [...sugs].sort((a,b) => (t.by[b.id]||[]).length - (t.by[a.id]||[]).length);
+  return `<article class="meet" id="m-${esc(m.id)}" data-cat="${esc(m.category)}">
+    <div class="m-date"><span class="d">${String(d.getDate()).padStart(2,'0')}</span><span class="mo">${MONTHS[d.getMonth()]}</span><span class="y">${d.getFullYear()}</span></div>
+    <div class="m-body">
+      <div class="m-top"><h3>${c.plural}</h3><span class="pill" data-cat="${esc(m.category)}">${c.label}</span><span class="when">${whenTxt(m.date)}</span>
+        ${S.editMeeting === m.id ? '' : `<button class="linkish edit" type="button" data-action="edit" data-id="${esc(m.id)}" ${S.readOnly?'hidden':''}>editar</button>`}</div>
+      ${S.editMeeting === m.id ? editFormHTML(m) : `<p class="theme-line">Tema: ${m.theme ? `<b>${esc(m.theme)}</b>` : '<span>livre</span>'}</p>`}
+      <div class="phases" role="group" aria-label="Fase do encontro">${PHASES.map(([k,l]) => `<button type="button" data-action="phase" data-id="${esc(m.id)}" data-phase="${k}" aria-pressed="${phase===k}" ${S.readOnly?'disabled':''}>${l}</button>`).join('')}</div>
+      <p class="phase-hint">${hints[phase]}</p>
+      ${sugs.length ? `<ul class="sugs">${ordered.map(s => sugHTML(m, s, t, maxN)).join('')}</ul>` : `<div class="empty">Nenhuma sugestão ainda${phase === 'sugestoes' ? '. Seja a primeira pessoa.' : '.'}</div>`}
+      ${phase === 'sugestoes' ? addFormHTML(m) : ''}
+    </div>
+  </article>`;
+}
+
+function renderAgenda(){
+  const notice = $('#notice');
+  if (!S.db && S.ready) notice.innerHTML = '<div class="notice">Site sem banco de dados configurado: cole o firebaseConfig no index.html para ativar sugestões e votos.</div>';
+  else if (S.readOnly) notice.innerHTML = '<div class="notice">O banco recusou a gravação. Confira se as regras do Firestore foram publicadas.</div>';
+  else notice.innerHTML = '';
+  if (!S.ready) return;
+  const all = sortedMeetings().filter(m => S.filter === 'todos' || m.category === S.filter);
+  const up = all.filter(m => daysTo(m.date) >= 0), past = all.filter(m => daysTo(m.date) < 0).reverse();
+  $('#agendaList').innerHTML = up.length ? up.map(meetHTML).join('')
+    : `<div class="empty">${S.meetings.length ? 'Nenhum encontro futuro nessa categoria.' : 'Nenhum encontro marcado ainda. Crie o primeiro em “Novo encontro”.'}</div>`;
+  $('#pastWrap').hidden = !past.length;
+  $('#pastList').innerHTML = past.map(meetHTML).join('');
+}
+
+function prefillNew(){
+  const list = sortedMeetings(), last = list[list.length - 1];
+  const sel = $('#nmCat');
+  if (!sel.options.length) sel.innerHTML = ORDER.map(k => `<option value="${k}">${CATS[k].plural}</option>`).join('');
+  if ($('#newMeeting').contains(document.activeElement)) return;
+  if (last) {
+    const d = parseD(last.date); const nd = new Date(d.getFullYear(), d.getMonth() + 1, 15);
+    $('#nmDate').value = isoOf(nd);
+    sel.value = ORDER[(ORDER.indexOf(last.category) + 1) % ORDER.length];
+  } else { const t = today0(); $('#nmDate').value = isoOf(new Date(t.getFullYear(), t.getMonth() + (t.getDate() > 15 ? 1 : 0), 15)); sel.value = 'musica'; }
+}
+
+function busy(){ const a = document.activeElement; return a && a.closest && a.closest('form.f[data-form]') && (a.matches('input,textarea,select')); }
+function render(){
+  if (busy()) { S.pending = true; return; }
+  S.pending = false;
+  renderWho(); renderBand(); renderNext(); renderStrip(); renderFilters(); renderAgenda(); prefillNew();
+}
+document.addEventListener('focusout', () => setTimeout(() => { if (S.pending && !busy()) render(); }, 60));
+
+/* ---------- actions ---------- */
+document.addEventListener('click', async e => {
+  const el = e.target.closest('[data-action]'); if (!el) return;
+  const a = el.dataset.action, id = el.dataset.id;
+  if (a === 'pick-me') { setMe(el.dataset.name); $('#whoPop').hidden = true; $('#whoBtn').setAttribute('aria-expanded','false'); return; }
+  if (a === 'filter') { S.filter = el.dataset.cat; render(); return; }
+  if (a === 'goto') { const m = S.meetings.find(x => x.id === id); if (m && S.filter !== 'todos' && S.filter !== m.category) { S.filter = 'todos'; render(); }
+    if (m && daysTo(m.date) < 0) $('#pastWrap').open = true;
+    const t = document.getElementById('m-' + id); if (t) t.scrollIntoView({behavior: matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth', block:'start'}); return; }
+  if (a === 'open-form') { if (!S.me) { askWho(); return; } S.openForm = id; render(); const f = document.querySelector(`form[data-form="sug"][data-id="${CSS.escape(id)}"] input`); f && f.focus(); return; }
+  if (a === 'close-form') { S.openForm = null; document.activeElement.blur(); render(); return; }
+  if (a === 'edit') { S.editMeeting = id; S.confirm = null; render(); return; }
+  if (a === 'close-edit') { S.editMeeting = null; S.confirm = null; document.activeElement.blur(); render(); return; }
+  if (a === 'cancel') { S.confirm = null; render(); return; }
+  if (a === 'ask-del-sug') { S.confirm = 'sug:' + id; render(); return; }
+  if (a === 'ask-del-meet') { S.confirm = 'meet:' + id; document.activeElement.blur(); render(); return; }
+  if (a === 'del-sug') {
+    S.confirm = null;
+    const vs = S.votes.filter(v => v.suggestionId === id);
+    await write(async () => { for (const v of vs) await S.db.doc('votes/' + v.id).delete(); await S.db.doc('suggestions/' + id).delete(); }, 'Sugestão removida.');
+    return;
+  }
+  if (a === 'del-meet') {
+    S.confirm = null; S.editMeeting = null;
+    const sg = S.suggestions.filter(s => s.meetingId === id), vs = S.votes.filter(v => v.meetingId === id);
+    await write(async () => { for (const v of vs) await S.db.doc('votes/' + v.id).delete(); for (const s of sg) await S.db.doc('suggestions/' + s.id).delete(); await S.db.doc('meetings/' + id).delete(); }, 'Encontro excluído.');
+    return;
+  }
+  if (a === 'phase') {
+    const m = S.meetings.find(x => x.id === id); const ph = el.dataset.phase;
+    if (!m || (m.phase || 'sugestoes') === ph) return;
+    let winnerId = null;
+    if (ph === 'definido') { const L = leaderOf(id); if (L.best && !L.tie) winnerId = L.best.id; }
+    await write(() => S.db.doc('meetings/' + id).update({ phase: ph, winnerId }), ph === 'votacao' ? 'Votação aberta.' : ph === 'definido' ? (winnerId ? 'Programa definido.' : 'Empate: escolham a vencedora.') : 'Sugestões reabertas.');
+    return;
+  }
+  if (a === 'pick-winner') { await write(() => S.db.doc('meetings/' + el.dataset.mid).update({ winnerId: el.dataset.sid }), 'Programa definido.'); return; }
+  if (a === 'vote') {
+    if (!S.me) { askWho(); return; }
+    const mid = el.dataset.mid, sid = el.dataset.sid;
+    const vid = `${mid}__${slug(S.me)}`;
+    const cur = myVote(mid);
+    if (cur && cur.suggestionId === sid) await write(() => S.db.doc('votes/' + vid).delete(), 'Voto retirado.');
+    else await write(() => S.db.doc('votes/' + vid).set({ meetingId: mid, suggestionId: sid, member: S.me, at: Date.now() }), cur ? 'Voto trocado.' : 'Voto registrado.');
+    return;
+  }
+});
+
+document.addEventListener('submit', async e => {
+  const f = e.target.closest('form[data-form]'); if (!f) return;
+  e.preventDefault();
+  const id = f.dataset.id, fd = new FormData(f);
+  if (f.dataset.form === 'sug') {
+    if (!S.me) { askWho(); return; }
+    const title = String(fd.get('title') || '').trim(); if (!title) return;
+    const data = { meetingId: id, title, creator: String(fd.get('creator')||'').trim(), link: String(fd.get('link')||'').trim(), note: String(fd.get('note')||'').trim(), bonusType: String(fd.get('bonusType')||''), member: S.me, createdAt: Date.now() };
+    document.activeElement.blur();
+    const ok = await write(() => S.db.collection('suggestions').add(data), 'Sugestão enviada.');
+    if (ok) { S.openForm = null; render(); }
+  }
+  if (f.dataset.form === 'edit') {
+    const date = String(fd.get('date')||''); if (!date) return;
+    document.activeElement.blur();
+    const ok = await write(() => S.db.doc('meetings/' + id).update({ date, category: String(fd.get('category')), theme: String(fd.get('theme')||'').trim() }), 'Encontro atualizado.');
+    if (ok) { S.editMeeting = null; render(); }
+  }
+});
+
+$('#newMeeting').addEventListener('submit', async e => {
+  e.preventDefault();
+  const date = $('#nmDate').value, category = $('#nmCat').value, theme = $('#nmTheme').value.trim();
+  if (!date) return;
+  let mid = 'm-' + date; if (S.meetings.some(m => m.id === mid)) mid += '-' + Math.random().toString(36).slice(2,6);
+  document.activeElement.blur();
+  const ok = await write(() => S.db.doc('meetings/' + mid).set({ date, category, theme, phase:'sugestoes', winnerId:null, createdAt: Date.now() }), 'Encontro criado.');
+  if (ok) { $('#nmTheme').value = ''; render(); const t = document.getElementById('m-' + mid); t && t.scrollIntoView({block:'start'}); }
+});
+
+/* ---------- boot ---------- */
+render();
+const snap = qs => qs.docs.map(d => ({ id: d.id, ...d.data() }));
+(async () => {
+  const db = makeDB();
+  S.db = db;
+  if (!db) { S.ready = true; render(); return; }
+  try { await seedIfEmpty(db); } catch(e) { console.warn('seed', e); }
+  const onErr = e => { if (e && e.code === 'permission-denied') S.readOnly = true; S.ready = true; render(); };
+  db.collection('meetings').onSnapshot(q => { S.meetings = snap(q); S.ready = true; render(); }, onErr);
+  db.collection('suggestions').onSnapshot(q => { S.suggestions = snap(q); render(); }, onErr);
+  db.collection('votes').onSnapshot(q => { S.votes = snap(q); render(); }, onErr);
+  db.doc('config/club').onSnapshot(d => { S.members = (d.exists && Array.isArray(d.data().members)) ? d.data().members : []; render(); }, onErr);
+})();
+}
+</script>
+</body>
+</html>
